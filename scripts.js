@@ -25,7 +25,6 @@ const columns = 4;
 let scoreData = -1;
 let cells = [];
 let cellPosition = { x: 0, y: 0 };
-let cellsPositions = [];
 
 let moveDirection = "left";
 let isGamePlayed = false;
@@ -58,7 +57,8 @@ const getRecordScore = () => {
 };
 
 const spawnEmptyCells = () => {
-  const startCells = "2";
+  const countNeedFilledCells = 2;
+  let countAlreadyFilledCells = 0;
   let offset = {
     x: 0,
     y: 0,
@@ -68,13 +68,18 @@ const spawnEmptyCells = () => {
     const createCell = document.createElement("div");
     createCell.classList.add("cell");
     createCell.style.transform = `translate(${offset.x}px, ${offset.y}px)`;
-    if (cells.length === 0 || cells.length === countCell - 1) {
-      createCell.innerHTML = startCells;
+    if (
+      countAlreadyFilledCells < countNeedFilledCells &&
+      Math.random() * 2 > 1
+    ) {
+      createCell.innerHTML = Math.random() * 2 > 1 ? 4 : 2;
+      countAlreadyFilledCells++;
     }
-    cells.push(createCell);
-
+    if (i + 1 === countCell && countAlreadyFilledCells < countNeedFilledCells) {
+      createCell.innerHTML = Math.random() * 2 > 1 ? 4 : 2;
+    }
+    cells.push({ node: createCell, x: cellPosition.x, y: cellPosition.y });
     if (cells.length % 4 !== 0) {
-      cellsPositions.push({ x: cellPosition.x, y: cellPosition.y });
       cellPosition = {
         x: cellPosition.x + 1,
         y: cellPosition.y,
@@ -84,7 +89,6 @@ const spawnEmptyCells = () => {
         y: offset.y,
       };
     } else {
-      cellsPositions.push({ x: cellPosition.x, y: cellPosition.y });
       cellPosition = {
         x: 0,
         y: cellPosition.y + 1,
@@ -94,7 +98,7 @@ const spawnEmptyCells = () => {
         y: offset.y + paddingCell + cellSize.height,
       };
     }
-    console.log(cellPosition);
+
     playingField.appendChild(createCell);
   }
 };
@@ -112,29 +116,58 @@ const gameOver = () => {
 
 const checkFieldBorder = () => {};
 
-const checkCollisionCells = () => {};
-
-const moveCells = () => {
-  if (moveDirection === "left") {
-    for (let i = 0; i < playingField.childElementCount; i++) {
-      for (let j = 0; j < columns; j++) {
-        if (cells[i].innerHTML === cells[i].innerHTML) {
+const checkCollisionCells = () => {
+  /*
+  moveDirection = "left";
+  moveDirection = "right";
+  moveDirection = "top";
+  moveDirection = "down";
+  */
+  if (moveDirection === "right") {
+    for (let indexY = columns; indexY >= 0; indexY--) {
+      for (let indexX = rows; indexX >= 0; indexX--) {
+        let firstNode = cells.filter(
+          (item) => item.y === indexY && item.x === indexX
+        );
+        if (firstNode.length > 0) {
+          if (
+            firstNode[0].node.innerHTML !== "" &&
+            firstNode[0].x !== columns - 1
+          ) {
+            for (let remainingX = indexX; remainingX > 0; remainingX--) {
+              let secondNode = cells.filter(
+                (item) => item.y === indexY && item.x === remainingX
+              );
+              if (secondNode[0].node.innerHTML === "") {
+                let firstNodeStyles = firstNode[0].node.style.transform;
+                let secondNodeStyles = secondNode[0].node.style.transform;
+                firstNode[0].node.style.transform = secondNodeStyles;
+                secondNode[0].node.style.transform = firstNodeStyles;
+              }
+            }
+          }
         }
+
+        /*let cellNode = cells.filter(
+          (item) =>
+            item.y === cells[i].y.innerHTML && item.x === cells[j].x.innerHTML
+        );
+        if (cellNode.node.innerHTML !== "") {
+          for (let n = j; n > 0; n--) {
+            let cellNode = cells.filter(
+              (item) =>
+                item.y === cells[i].y.innerHTML && item.x === cells[n].x.innerHTML
+            );
+          }
+        }*/
       }
     }
-
-    rows;
-    columns;
-  } else if (moveDirection === "right") {
-    cellsPositions[i];
-  } else if (moveDirection === "top") {
-    cellsPositions[i];
-  } else {
-    cellsPositions[i];
   }
+};
+
+const moveCells = () => {
   checkCollisionCells();
   cells.unshift(cells.pop());
-  cellsPositions.unshift(cellsPositions.pop());
   checkFieldBorder();
 };
 
