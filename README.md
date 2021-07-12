@@ -1,4 +1,4 @@
-# snake
-Wrote the snake using Js.
+# 2048 game
+Wrote the 2048 game using Js.
 
-Demo: https://snake-js-eight.vercel.app/
+Demo: 
