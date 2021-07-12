@@ -72,13 +72,18 @@ const spawnEmptyCells = () => {
       countAlreadyFilledCells < countNeedFilledCells &&
       Math.random() * 2 > 1
     ) {
-      createCell.innerHTML = Math.random() * 2 > 1 ? 4 : 2;
+      createCell.innerText = Math.random() * 2 > 1 ? 4 : 2;
       countAlreadyFilledCells++;
     }
     if (i + 1 === countCell && countAlreadyFilledCells < countNeedFilledCells) {
-      createCell.innerHTML = Math.random() * 2 > 1 ? 4 : 2;
+      createCell.innerText = Math.random() * 2 > 1 ? 4 : 2;
     }
-    cells.push({ node: createCell, x: cellPosition.x, y: cellPosition.y });
+    cells.push({
+      node: createCell,
+      x: cellPosition.x,
+      y: cellPosition.y,
+      index: i,
+    });
     if (cells.length % 4 !== 0) {
       cellPosition = {
         x: cellPosition.x + 1,
@@ -123,43 +128,38 @@ const checkCollisionCells = () => {
   moveDirection = "top";
   moveDirection = "down";
   */
-  if (moveDirection === "right") {
-    for (let indexY = columns; indexY >= 0; indexY--) {
-      for (let indexX = rows; indexX >= 0; indexX--) {
-        let firstNode = cells.filter(
-          (item) => item.y === indexY && item.x === indexX
-        );
-        if (firstNode.length > 0) {
-          if (
-            firstNode[0].node.innerHTML !== "" &&
-            firstNode[0].x !== columns - 1
-          ) {
-            for (let remainingX = indexX; remainingX > 0; remainingX--) {
-              let secondNode = cells.filter(
+  if (moveDirection === "left") {
+    for (let indexY = 0; indexY < columns; indexY++) {
+      let firstNode;
+      for (let indexX = 0; indexX < rows; indexX++) {
+        let repeatIndex = indexX;
+        const move = () => {
+          firstNode = cells.filter(
+            (item) => item.y === indexY && item.x === repeatIndex
+          );
+          if (firstNode.length > 0 && firstNode[0].node.innerText !== "") {
+            let secondNode;
+            for (let remainingX = repeatIndex; remainingX >= 0; remainingX--) {
+              secondNode = cells.filter(
                 (item) => item.y === indexY && item.x === remainingX
               );
-              if (secondNode[0].node.innerHTML === "") {
-                let firstNodeStyles = firstNode[0].node.style.transform;
-                let secondNodeStyles = secondNode[0].node.style.transform;
-                firstNode[0].node.style.transform = secondNodeStyles;
-                secondNode[0].node.style.transform = firstNodeStyles;
+              if (
+                secondNode.length > 0 &&
+                secondNode[0].node.innerText === "" &&
+                secondNode[0].x < firstNode[0].x
+              ) {
+                const dataFirstNode = firstNode[0].node.innerText;
+                const dataSecondNode = secondNode[0].node.innerText;
+                firstNode[0].node.innerText = dataSecondNode;
+                secondNode[0].node.innerText = dataFirstNode;
+                repeatIndex--;
+                console.log(repeatIndex);
+                move();
               }
             }
           }
-        }
-
-        /*let cellNode = cells.filter(
-          (item) =>
-            item.y === cells[i].y.innerHTML && item.x === cells[j].x.innerHTML
-        );
-        if (cellNode.node.innerHTML !== "") {
-          for (let n = j; n > 0; n--) {
-            let cellNode = cells.filter(
-              (item) =>
-                item.y === cells[i].y.innerHTML && item.x === cells[n].x.innerHTML
-            );
-          }
-        }*/
+        };
+        move();
       }
     }
   }
