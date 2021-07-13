@@ -212,20 +212,19 @@ const checkCollisionCells = () => {
   };
   //indexY columns rows indexX
   console.log("start");
-  const calculate = (firstYIndex, secondYIndex, firstXIndex, secondXIndex) => {
-    cells[firstYIndex][firstXIndex].node.textContent = "";
-    cells[secondYIndex][secondXIndex].node.textContent =
-      +cells[secondYIndex][secondXIndex].node.textContent * 2;
+  const calculate = (firstElement, secondElement) => {
+    firstElement.node.textContent = "";
+    secondElement.node.textContent = +secondElement.node.textContent * 2;
 
-    playAnimation(cells[secondYIndex][secondXIndex].node.parentNode);
+    playAnimation(secondElement.node.parentNode);
     countEmptyCells++;
   };
-  const swap = (firstYIndex, secondYIndex, firstXIndex, secondXIndex) => {
-    const numFirstCell = cells[firstYIndex][firstXIndex].node.textContent;
-    const numSecondCell = cells[secondYIndex][secondXIndex].node.textContent;
+  const swap = (firstElement, secondElement) => {
+    const numFirstCell = firstElement.node.textContent;
+    const numSecondCell = secondElement.node.textContent;
 
-    cells[firstYIndex][firstXIndex].node.textContent = numSecondCell;
-    cells[secondYIndex][secondXIndex].node.textContent = numFirstCell;
+    firstElement.node.textContent = numSecondCell;
+    secondElement.node.textContent = numFirstCell;
   };
   if (moveDirection === "left") {
     for (let iY = 0; iY < rows; iY++) {
@@ -236,10 +235,10 @@ const checkCollisionCells = () => {
               cells[iY][iX].node.textContent ===
               cells[iY][iX - 1].node.textContent
             ) {
-              calculate(iY, iY, iX, iX - 1);
+              calculate(cells[iY][iX], cells[iY][iX - 1]);
             }
           } else {
-            swap(iY, iY, iX, iX - 1);
+            swap(cells[iY][iX], cells[iY][iX - 1]);
           }
         }
       }
@@ -253,10 +252,10 @@ const checkCollisionCells = () => {
               cells[iY][iX].node.textContent ===
               cells[iY][iX + 1].node.textContent
             ) {
-              calculate(iY, iY, iX, iX + 1);
+              calculate(cells[iY][iX], cells[iY][iX + 1]);
             }
           } else {
-            swap(iY, iY, iX, iX + 1);
+            swap(cells[iY][iX], cells[iY][iX + 1]);
           }
         }
       }
@@ -264,16 +263,20 @@ const checkCollisionCells = () => {
   } else if (moveDirection === "top") {
     for (let iX = 0; iX < rows; iX++) {
       for (let iY = 0; iY < rows; iY++) {
-        if (iY > 0 && cells[iY][iX].node.textContent !== "") {
+        if (
+          iY > 0 &&
+          cells[iY][iX].y > 0 &&
+          cells[iY][iX].node.textContent !== ""
+        ) {
           if (cells[iY - 1][iX].node.textContent !== "") {
             if (
               cells[iY][iX].node.textContent ===
               cells[iY - 1][iX].node.textContent
             ) {
-              calculate(iY, iY - 1, iX, iX);
+              calculate(cells[iY][iX], cells[iY - 1][iX]);
             }
           } else {
-            swap(iY, iY - 1, iX, iX);
+            swap(cells[iY][iX], cells[iY - 1][iX]);
           }
         }
       }
@@ -281,21 +284,64 @@ const checkCollisionCells = () => {
   } else if (moveDirection === "down") {
     for (let iX = 0; iX < rows; iX++) {
       for (let iY = rows; iY >= 0; iY--) {
-        if (iY < rows - 1 > 0 && cells[iY][iX].node.textContent !== "") {
+        if (
+          iY < rows - 1 &&
+          cells[iY][iX].y < rows - 1 &&
+          cells[iY][iX].node.textContent !== ""
+        ) {
           if (cells[iY + 1][iX].node.textContent !== "") {
             if (
               cells[iY][iX].node.textContent ===
               cells[iY + 1][iX].node.textContent
             ) {
-              calculate(iY, iY + 1, iX, iX);
+              calculate(cells[iY][iX], cells[iY + 1][iX]);
             }
           } else {
-            swap(iY, iY + 1, iX, iX);
+            swap(cells[iY][iX], cells[iY + 1][iX]);
           }
         }
       }
     }
   }
+  /*else if (moveDirection === "top") {
+    for (let iX = 0; iX < rows; iX++) {
+      let cell;
+      for (let iY = 0; iY < rows; iY++) {
+        cell = cells
+          .flat()
+          .filter((item) => item.x === iX && item.y === iY - 1);
+        if (iY > 0 && cells[iY][iX].node.textContent !== "") {
+          console.log(cell[0]);
+          if (cell[0].node.textContent !== "") {
+            if (cells[iY][iX].node.textContent === cell[0].node.textContent) {
+              calculate(cells[iY][iX], cell[0]);
+            }
+          } else {
+            swap(cells[iY][iX], cell[0]);
+          }
+        }
+      }
+    }
+  } else if (moveDirection === "down") {
+    for (let iX = 0; iX < rows; iX++) {
+      let cell;
+      for (let iY = rows; iY >= 0; iY--) {
+        cell = cells
+          .flat()
+          .filter((item) => item.x === iX && item.y === iY + 1);
+        if (iY < rows - 1 && cells[iY][iX].node.textContent !== "") {
+          console.log(cell[0]);
+          if (cell[0].node.textContent !== "") {
+            if (cells[iY][iX].node.textContent === cell[0].node.textContent) {
+              calculate(cells[iY][iX], cell[0]);
+            }
+          } else {
+            swap(cells[iY][iX], cell[0]);
+          }
+        }
+      }
+    }
+  }*/
 
   /*if (moveDirection === "left") {
         } else if (moveDirection === "right") {
