@@ -24,6 +24,7 @@ const columns = 4;
 
 let scoreData = -1;
 let cells = [];
+let countEmptyCells = 16;
 let cellPosition = { x: 0, y: 0 };
 
 let moveDirection = "left";
@@ -56,6 +57,19 @@ const getRecordScore = () => {
   }
 };
 
+const playAnimation = (parent) => {
+  parent.classList.add("cellAnimation");
+  setTimeout(() => {
+    parent.classList.remove("cellAnimation");
+  }, 400);
+};
+
+const fillCellData = (element, parent) => {
+  element.innerText = Math.random() * 5 < 1 ? 4 : 2;
+  countEmptyCells--;
+  playAnimation(parent);
+};
+
 const spawnEmptyCells = () => {
   const countNeedFilledCells = 2;
   let countAlreadyFilledCells = 0;
@@ -64,7 +78,15 @@ const spawnEmptyCells = () => {
     y: 0,
   };
 
+  // создаю многомерные массив
+  for (let i = 0; i < rows; i++) {
+    cells.push([]);
+  }
+
+  let yCellPosition = 0;
+
   for (let i = 0; i < countCell; i++) {
+    const wrapCell = document.createElement("div");
     const createCell = document.createElement("div");
     createCell.classList.add("cell");
     createCell.style.transform = `translate(${offset.x}px, ${offset.y}px)`;
@@ -72,19 +94,20 @@ const spawnEmptyCells = () => {
       countAlreadyFilledCells < countNeedFilledCells &&
       Math.random() * 2 > 1
     ) {
-      createCell.innerText = Math.random() * 2 > 1 ? 4 : 2;
+      fillCellData(createCell, wrapCell);
       countAlreadyFilledCells++;
     }
     if (i + 1 === countCell && countAlreadyFilledCells < countNeedFilledCells) {
       createCell.innerText = Math.random() * 2 > 1 ? 4 : 2;
     }
-    cells.push({
-      node: createCell,
+    cells[yCellPosition].push({
       x: cellPosition.x,
       y: cellPosition.y,
+      node: createCell,
       index: i,
     });
-    if (cells.length % 4 !== 0) {
+    console.log(yCellPosition);
+    if ((i + 1) % 4 !== 0) {
       cellPosition = {
         x: cellPosition.x + 1,
         y: cellPosition.y,
@@ -94,6 +117,7 @@ const spawnEmptyCells = () => {
         y: offset.y,
       };
     } else {
+      yCellPosition += 1;
       cellPosition = {
         x: 0,
         y: cellPosition.y + 1,
@@ -103,8 +127,8 @@ const spawnEmptyCells = () => {
         y: offset.y + paddingCell + cellSize.height,
       };
     }
-
-    playingField.appendChild(createCell);
+    playingField.appendChild(wrapCell);
+    wrapCell.appendChild(createCell);
   }
 };
 
@@ -128,7 +152,7 @@ const checkCollisionCells = () => {
   moveDirection = "top";
   moveDirection = "down";
   */
-  if (moveDirection === "left") {
+  /*const tryMove = () => {
     for (let indexY = 0; indexY < columns; indexY++) {
       let firstNode;
       for (let indexX = 0; indexX < rows; indexX++) {
@@ -162,7 +186,124 @@ const checkCollisionCells = () => {
         move();
       }
     }
+  };*/
+  const getRandomNum = (data) => {
+    const num = Math.round(Math.random() * (data - 1));
+    console.log(num);
+    return num;
+  };
+  const getRandomEmptyСell = () => {
+    let randomCell = cells[getRandomNum(rows)][getRandomNum(columns)];
+    if (countEmptyCells > 0) {
+      if (randomCell.node.textContent !== "") {
+        return getRandomEmptyСell();
+      } else {
+        return randomCell;
+      }
+    }
+  };
+  const tryFillRandomCell = () => {
+    if (countEmptyCells > 0) {
+      let randomCell = getRandomEmptyСell();
+      fillCellData(randomCell.node, randomCell.node.parentNode);
+    } else {
+      alert("поражение");
+    }
+  };
+  //indexY columns rows indexX
+  console.log("start");
+  const calculate = (firstYIndex, secondYIndex, firstXIndex, secondXIndex) => {
+    cells[firstYIndex][firstXIndex].node.textContent = "";
+    cells[secondYIndex][secondXIndex].node.textContent =
+      +cells[secondYIndex][secondXIndex].node.textContent * 2;
+
+    playAnimation(cells[secondYIndex][secondXIndex].node.parentNode);
+    countEmptyCells++;
+  };
+  const swap = (firstYIndex, secondYIndex, firstXIndex, secondXIndex) => {
+    const numFirstCell = cells[firstYIndex][firstXIndex].node.textContent;
+    const numSecondCell = cells[secondYIndex][secondXIndex].node.textContent;
+
+    cells[firstYIndex][firstXIndex].node.textContent = numSecondCell;
+    cells[secondYIndex][secondXIndex].node.textContent = numFirstCell;
+  };
+  if (moveDirection === "left") {
+    for (let iY = 0; iY < rows; iY++) {
+      for (let iX = 0; iX < rows; iX++) {
+        if (iX > 0 && cells[iY][iX].node.textContent !== "") {
+          if (cells[iY][iX - 1].node.textContent !== "") {
+            if (
+              cells[iY][iX].node.textContent ===
+              cells[iY][iX - 1].node.textContent
+            ) {
+              calculate(iY, iY, iX, iX - 1);
+            }
+          } else {
+            swap(iY, iY, iX, iX - 1);
+          }
+        }
+      }
+    }
+  } else if (moveDirection === "right") {
+    for (let iY = 0; iY < rows; iY++) {
+      for (let iX = rows; iX >= 0; iX--) {
+        if (iX < rows - 1 && cells[iY][iX].node.textContent !== "") {
+          if (cells[iY][iX + 1].node.textContent !== "") {
+            if (
+              cells[iY][iX].node.textContent ===
+              cells[iY][iX + 1].node.textContent
+            ) {
+              calculate(iY, iY, iX, iX + 1);
+            }
+          } else {
+            swap(iY, iY, iX, iX + 1);
+          }
+        }
+      }
+    }
+  } else if (moveDirection === "top") {
+    for (let iX = 0; iX < rows; iX++) {
+      for (let iY = 0; iY < rows; iY++) {
+        if (iY > 0 && cells[iY][iX].node.textContent !== "") {
+          if (cells[iY - 1][iX].node.textContent !== "") {
+            if (
+              cells[iY][iX].node.textContent ===
+              cells[iY - 1][iX].node.textContent
+            ) {
+              calculate(iY, iY - 1, iX, iX);
+            }
+          } else {
+            swap(iY, iY - 1, iX, iX);
+          }
+        }
+      }
+    }
+  } else if (moveDirection === "down") {
+    for (let iX = 0; iX < rows; iX++) {
+      for (let iY = rows; iY >= 0; iY--) {
+        if (iY < rows - 1 > 0 && cells[iY][iX].node.textContent !== "") {
+          if (cells[iY + 1][iX].node.textContent !== "") {
+            if (
+              cells[iY][iX].node.textContent ===
+              cells[iY + 1][iX].node.textContent
+            ) {
+              calculate(iY, iY + 1, iX, iX);
+            }
+          } else {
+            swap(iY, iY + 1, iX, iX);
+          }
+        }
+      }
+    }
   }
+
+  /*if (moveDirection === "left") {
+        } else if (moveDirection === "right") {
+        } else if (moveDirection === "top") {
+        } else if (moveDirection === "down") {
+        }*/
+  console.log("end");
+  tryFillRandomCell();
 };
 
 const moveCells = () => {

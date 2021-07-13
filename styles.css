@@ -102,8 +102,25 @@ main {
   font-size: 30px;
   color: rgb(36, 36, 36);
   font-weight: bold;
-  /*box-shadow: -5px 5px 10px #1c1c1c, 5px -5px 10px #262626;*/
+  box-shadow: -5px 5px 10px #1c1c1c, 5px -5px 10px #262626;
   z-index: 3;
+}
+
+.cellAnimation {
+  animation-duration: 0.4s;
+  animation-name: cellAnimation;
+}
+
+@keyframes cellAnimation {
+  from {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 .startText {
