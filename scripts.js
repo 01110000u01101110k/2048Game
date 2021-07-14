@@ -57,17 +57,17 @@ const getRecordScore = () => {
   }
 };
 
-const playAnimation = (parent) => {
-  parent.classList.add("cellAnimation");
+const playAnimation = (parent, animation) => {
+  parent.classList.add(animation);
   setTimeout(() => {
-    parent.classList.remove("cellAnimation");
+    parent.classList.remove(animation);
   }, 400);
 };
 
 const fillCellData = (element, parent) => {
   element.innerText = Math.random() * 5 < 1 ? 4 : 2;
   countEmptyCells--;
-  playAnimation(parent);
+  playAnimation(parent, "cellSecondAnimation");
 };
 
 const spawnEmptyCells = () => {
@@ -77,13 +77,6 @@ const spawnEmptyCells = () => {
     x: 0,
     y: 0,
   };
-
-  // создаю многомерные массив
-  for (let i = 0; i < rows; i++) {
-    cells.push([]);
-  }
-
-  let yCellPosition = 0;
 
   for (let i = 0; i < countCell; i++) {
     const wrapCell = document.createElement("div");
@@ -98,15 +91,20 @@ const spawnEmptyCells = () => {
       countAlreadyFilledCells++;
     }
     if (i + 1 === countCell && countAlreadyFilledCells < countNeedFilledCells) {
-      createCell.innerText = Math.random() * 2 > 1 ? 4 : 2;
+      const randomNum = Math.random() * 2 > 1 ? 4 : 2;
+      createCell.innerText = randomNum;
+      if (randomNum === 2) {
+        secondElement.classList.add("color1");
+      } else if (randomNum === 4) {
+        secondElement.classList.add("color2");
+      }
     }
-    cells[yCellPosition].push({
+    cells.push({
       x: cellPosition.x,
       y: cellPosition.y,
       node: createCell,
       index: i,
     });
-    console.log(yCellPosition);
     if ((i + 1) % 4 !== 0) {
       cellPosition = {
         x: cellPosition.x + 1,
@@ -117,7 +115,6 @@ const spawnEmptyCells = () => {
         y: offset.y,
       };
     } else {
-      yCellPosition += 1;
       cellPosition = {
         x: 0,
         y: cellPosition.y + 1,
@@ -193,7 +190,7 @@ const checkCollisionCells = () => {
     return num;
   };
   const getRandomEmptyСell = () => {
-    let randomCell = cells[getRandomNum(rows)][getRandomNum(columns)];
+    let randomCell = cells[getRandomNum(countCell)];
     if (countEmptyCells > 0) {
       if (randomCell.node.textContent !== "") {
         return getRandomEmptyСell();
@@ -203,153 +200,186 @@ const checkCollisionCells = () => {
     }
   };
   const tryFillRandomCell = () => {
-    if (countEmptyCells > 0) {
-      let randomCell = getRandomEmptyСell();
-      fillCellData(randomCell.node, randomCell.node.parentNode);
-    } else {
-      alert("поражение");
-    }
+    let randomCell = getRandomEmptyСell();
+    fillCellData(randomCell.node, randomCell.node.parentNode);
   };
   //indexY columns rows indexX
   console.log("start");
   const calculate = (firstElement, secondElement) => {
-    firstElement.node.textContent = "";
-    secondElement.node.textContent = +secondElement.node.textContent * 2;
+    firstElement.textContent = "";
+    secondElement.textContent = +secondElement.textContent * 2;
+    if (+secondElement.textContent * 2 === 4) {
+      secondElement.classList.remove("color1");
+      secondElement.classList.add("color2");
+    } else if (+secondElement.textContent * 2 === 8) {
+      secondElement.classList.remove("color2");
+      secondElement.classList.add("color3");
+    } else if (+secondElement.textContent * 2 === 16) {
+      secondElement.classList.remove("color3");
+      secondElement.classList.add("color4");
+    } else if (+secondElement.textContent * 2 === 32) {
+      secondElement.classList.remove("color4");
+      secondElement.classList.add("color5");
+    } else if (+secondElement.textContent * 2 === 64) {
+      secondElement.classList.remove("color5");
+      secondElement.classList.add("color6");
+    } else if (+secondElement.textContent * 2 === 128) {
+      secondElement.classList.remove("color6");
+      secondElement.classList.add("color7");
+    }
 
-    playAnimation(secondElement.node.parentNode);
+    playAnimation(secondElement.parentNode, "cellFirstAnimation");
     countEmptyCells++;
   };
   const swap = (firstElement, secondElement) => {
-    const numFirstCell = firstElement.node.textContent;
-    const numSecondCell = secondElement.node.textContent;
+    const numFirstCell = firstElement.textContent;
+    const numSecondCell = secondElement.textContent;
 
-    firstElement.node.textContent = numSecondCell;
-    secondElement.node.textContent = numFirstCell;
+    firstElement.textContent = numSecondCell;
+    secondElement.textContent = numFirstCell;
+    if (+secondElement.textContent === 4) {
+      secondElement.classList.remove("color1");
+      secondElement.classList.add("color2");
+    } else if (+secondElement.textContent === 8) {
+      secondElement.classList.remove("color2");
+      secondElement.classList.add("color3");
+    } else if (+secondElement.textContent === 16) {
+      secondElement.classList.remove("color3");
+      secondElement.classList.add("color4");
+    } else if (+secondElement.textContent === 32) {
+      secondElement.classList.remove("color4");
+      secondElement.classList.add("color5");
+    } else if (+secondElement.textContent === 64) {
+      secondElement.classList.remove("color5");
+      secondElement.classList.add("color6");
+    } else if (+secondElement.textContent === 128) {
+      secondElement.classList.remove("color6");
+      secondElement.classList.add("color7");
+    }
   };
-  if (moveDirection === "left") {
-    for (let iY = 0; iY < rows; iY++) {
-      for (let iX = 0; iX < rows; iX++) {
-        if (iX > 0 && cells[iY][iX].node.textContent !== "") {
-          if (cells[iY][iX - 1].node.textContent !== "") {
-            if (
-              cells[iY][iX].node.textContent ===
-              cells[iY][iX - 1].node.textContent
-            ) {
-              calculate(cells[iY][iX], cells[iY][iX - 1]);
-            }
-          } else {
-            swap(cells[iY][iX], cells[iY][iX - 1]);
-          }
-        }
-      }
-    }
-  } else if (moveDirection === "right") {
-    for (let iY = 0; iY < rows; iY++) {
-      for (let iX = rows; iX >= 0; iX--) {
-        if (iX < rows - 1 && cells[iY][iX].node.textContent !== "") {
-          if (cells[iY][iX + 1].node.textContent !== "") {
-            if (
-              cells[iY][iX].node.textContent ===
-              cells[iY][iX + 1].node.textContent
-            ) {
-              calculate(cells[iY][iX], cells[iY][iX + 1]);
-            }
-          } else {
-            swap(cells[iY][iX], cells[iY][iX + 1]);
-          }
-        }
-      }
-    }
-  } else if (moveDirection === "top") {
-    for (let iX = 0; iX < rows; iX++) {
-      for (let iY = 0; iY < rows; iY++) {
-        if (
-          iY > 0 &&
-          cells[iY][iX].y > 0 &&
-          cells[iY][iX].node.textContent !== ""
-        ) {
-          if (cells[iY - 1][iX].node.textContent !== "") {
-            if (
-              cells[iY][iX].node.textContent ===
-              cells[iY - 1][iX].node.textContent
-            ) {
-              calculate(cells[iY][iX], cells[iY - 1][iX]);
-            }
-          } else {
-            swap(cells[iY][iX], cells[iY - 1][iX]);
-          }
-        }
-      }
-    }
-  } else if (moveDirection === "down") {
-    for (let iX = 0; iX < rows; iX++) {
-      for (let iY = rows; iY >= 0; iY--) {
-        if (
-          iY < rows - 1 &&
-          cells[iY][iX].y < rows - 1 &&
-          cells[iY][iX].node.textContent !== ""
-        ) {
-          if (cells[iY + 1][iX].node.textContent !== "") {
-            if (
-              cells[iY][iX].node.textContent ===
-              cells[iY + 1][iX].node.textContent
-            ) {
-              calculate(cells[iY][iX], cells[iY + 1][iX]);
-            }
-          } else {
-            swap(cells[iY][iX], cells[iY + 1][iX]);
-          }
-        }
-      }
-    }
-  }
-  /*else if (moveDirection === "top") {
-    for (let iX = 0; iX < rows; iX++) {
-      let cell;
-      for (let iY = 0; iY < rows; iY++) {
-        cell = cells
-          .flat()
-          .filter((item) => item.x === iX && item.y === iY - 1);
-        if (iY > 0 && cells[iY][iX].node.textContent !== "") {
-          console.log(cell[0]);
-          if (cell[0].node.textContent !== "") {
-            if (cells[iY][iX].node.textContent === cell[0].node.textContent) {
-              calculate(cells[iY][iX], cell[0]);
-            }
-          } else {
-            swap(cells[iY][iX], cell[0]);
-          }
-        }
-      }
-    }
-  } else if (moveDirection === "down") {
-    for (let iX = 0; iX < rows; iX++) {
-      let cell;
-      for (let iY = rows; iY >= 0; iY--) {
-        cell = cells
-          .flat()
-          .filter((item) => item.x === iX && item.y === iY + 1);
-        if (iY < rows - 1 && cells[iY][iX].node.textContent !== "") {
-          console.log(cell[0]);
-          if (cell[0].node.textContent !== "") {
-            if (cells[iY][iX].node.textContent === cell[0].node.textContent) {
-              calculate(cells[iY][iX], cell[0]);
-            }
-          } else {
-            swap(cells[iY][iX], cell[0]);
-          }
-        }
-      }
-    }
-  }*/
 
-  /*if (moveDirection === "left") {
-        } else if (moveDirection === "right") {
-        } else if (moveDirection === "top") {
-        } else if (moveDirection === "down") {
-        }*/
+  /*const playingFieldData = playingField.children;
+  console.log(playingFieldData);*/
+  let indexData = rows;
+  const horizontalMove = () => {
+    let arr = [...playingField.children];
+    if (moveDirection === "left") {
+      arr.reverse();
+    }
+    let spawnEmptyCell = false;
+
+    const move = () => {
+      for (let i = arr.length - 1; i >= 0; i--) {
+        for (let j = 1; j < columns - (i % 4); j++) {
+          if (arr[i + 1] !== undefined) {
+            if (
+              arr[i].children[0].textContent !== "" &&
+              arr[i + 1].children[0].textContent === ""
+            ) {
+              swap(arr[i].children[0], arr[i + 1].children[0]);
+              if (!spawnEmptyCell) {
+                spawnEmptyCell = true;
+              }
+            }
+          }
+        }
+      }
+      if (indexData) {
+        indexData -= 1;
+        console.log("recursion");
+        move();
+      } else {
+        for (let i = arr.length - 1; i >= 0; i--) {
+          for (let j = 1; j < columns - (i % 4); j++) {
+            if (arr[i + 1] !== undefined) {
+              if (
+                arr[i].children[0].textContent !== "" &&
+                arr[i + 1].children[0].textContent !== "" &&
+                arr[i].children[0].textContent ===
+                  arr[i + 1].children[0].textContent
+              ) {
+                calculate(arr[i].children[0], arr[i + 1].children[0]);
+                if (!spawnEmptyCell) {
+                  spawnEmptyCell = true;
+                }
+              }
+            }
+          }
+        }
+        if (spawnEmptyCell) {
+          tryFillRandomCell();
+        }
+      }
+    };
+    move();
+  };
+
+  const verticalMove = () => {
+    let arr = [...playingField.children];
+    if (moveDirection === "top") {
+      arr.reverse();
+    }
+    let spawnEmptyCell = false;
+
+    const move = () => {
+      for (let i = arr.length - 1; i >= 0; i--) {
+        for (let j = 1; j < rows; j++) {
+          if (arr[i + 4] !== undefined) {
+            if (
+              arr[i].children[0].textContent !== "" &&
+              arr[i + 4].children[0].textContent === ""
+            ) {
+              swap(arr[i].children[0], arr[i + 4].children[0]);
+              if (!spawnEmptyCell) {
+                spawnEmptyCell = true;
+              }
+            }
+          }
+        }
+      }
+      if (indexData) {
+        indexData -= 1;
+        console.log("recursion");
+        move();
+      } else {
+        for (let i = arr.length - 1; i >= 0; i--) {
+          for (let j = 1; j < rows; j++) {
+            if (arr[i + 4] !== undefined) {
+              if (
+                arr[i].children[0].textContent !== "" &&
+                arr[i + 4].children[0].textContent !== "" &&
+                arr[i].children[0].textContent ===
+                  arr[i + 4].children[0].textContent
+              ) {
+                calculate(arr[i].children[0], arr[i + 4].children[0]);
+                if (!spawnEmptyCell) {
+                  spawnEmptyCell = true;
+                }
+              }
+            }
+          }
+        }
+        if (spawnEmptyCell) {
+          tryFillRandomCell();
+        }
+      }
+    };
+    move();
+  };
+  if (moveDirection === "right") {
+    horizontalMove();
+  } else if (moveDirection === "left") {
+    horizontalMove();
+  } else if (moveDirection === "top") {
+    verticalMove();
+  } else if (moveDirection === "down") {
+    verticalMove();
+  }
+
+  /*if (countEmptyCells === 0) {
+    alert("поражение");
+  }*/
   console.log("end");
-  tryFillRandomCell();
 };
 
 const moveCells = () => {

@@ -106,22 +106,70 @@ main {
   z-index: 3;
 }
 
-.cellAnimation {
+.cellFirstAnimation {
   animation-duration: 0.4s;
-  animation-name: cellAnimation;
+  animation-name: cellFirstAnimation;
 }
 
-@keyframes cellAnimation {
+@keyframes cellFirstAnimation {
   from {
-    transform: scale(1);
+    transform: scale(1, 1);
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.1, 1.1);
   }
   to {
-    transform: scale(1);
+    transform: scale(1, 1);
   }
 }
+
+.cellSecondAnimation {
+  animation-duration: 0.4s;
+  animation-name: cellSecondAnimation;
+}
+
+@keyframes cellSecondAnimation {
+  from {
+    opacity: 0.1;
+    transform: scale(0.5, 0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+}
+
+/*.color1 {
+  background-color: rgb(238, 217, 30) !important;
+}
+
+.color2 {
+  background-color: rgb(238, 165, 30) !important;
+}
+
+.color3 {
+  background-color: rgb(238, 113, 30) !important;
+}
+
+.color4 {
+  background-color: rgb(231, 30, 238) !important;
+}
+
+.color5 {
+  background-color: rgb(196, 30, 238) !important;
+}
+
+.color6 {
+  background-color: rgb(127, 30, 238) !important;
+}
+
+.color7 {
+  background-color: rgb(61, 30, 238) !important;
+}
+
+.color8 {
+  background-color: rgb(30, 238, 158) !important;
+}*/
 
 .startText {
   display: flex;
