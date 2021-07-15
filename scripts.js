@@ -64,8 +64,63 @@ const playAnimation = (parent, animation) => {
   }, 400);
 };
 
+const addColor = (firstElement, secondElement, action) => {
+  if (+secondElement.textContent === 2) {
+    if (action === "calculate") {
+      firstElement.classList.remove("color1");
+    } else if (action === "swap") {
+      firstElement.classList.remove("color1");
+    }
+    secondElement.classList.add("color1");
+  } else if (+secondElement.textContent === 4) {
+    if (action === "calculate") {
+      firstElement.classList.remove("color1");
+    } else if (action === "swap") {
+      firstElement.classList.remove("color2");
+    }
+    secondElement.classList.add("color2");
+  } else if (+secondElement.textContent === 8) {
+    if (action === "calculate") {
+      firstElement.classList.remove("color2");
+    } else if (action === "swap") {
+      firstElement.classList.remove("color3");
+    }
+    secondElement.classList.add("color3");
+  } else if (+secondElement.textContent === 16) {
+    if (action === "calculate") {
+      firstElement.classList.remove("color3");
+    } else if (action === "swap") {
+      firstElement.classList.remove("color4");
+    }
+    secondElement.classList.add("color4");
+  } else if (+secondElement.textContent === 32) {
+    if (action === "calculate") {
+      firstElement.classList.remove("color4");
+    } else if (action === "swap") {
+      firstElement.classList.remove("color5");
+    }
+    secondElement.classList.add("color5");
+  } else if (+secondElement.textContent === 64) {
+    if (action === "calculate") {
+      firstElement.classList.remove("color5");
+    } else if (action === "swap") {
+      firstElement.classList.remove("color6");
+    }
+    secondElement.classList.add("color6");
+  } else if (+secondElement.textContent === 128) {
+    if (action === "calculate") {
+      firstElement.classList.remove("color6");
+    } else if (action === "swap") {
+      firstElement.classList.remove("color7");
+    }
+    secondElement.classList.add("color7");
+  }
+};
+
 const fillCellData = (element, parent) => {
-  element.innerText = Math.random() * 5 < 1 ? 4 : 2;
+  const randomNum = Math.random() * 2 > 1 ? 4 : 2;
+  element.innerText = randomNum;
+  addColor("_", element, false);
   countEmptyCells--;
   playAnimation(parent, "cellSecondAnimation");
 };
@@ -93,11 +148,6 @@ const spawnEmptyCells = () => {
     if (i + 1 === countCell && countAlreadyFilledCells < countNeedFilledCells) {
       const randomNum = Math.random() * 2 > 1 ? 4 : 2;
       createCell.innerText = randomNum;
-      if (randomNum === 2) {
-        secondElement.classList.add("color1");
-      } else if (randomNum === 4) {
-        secondElement.classList.add("color2");
-      }
     }
     cells.push({
       x: cellPosition.x,
@@ -143,47 +193,6 @@ const gameOver = () => {
 const checkFieldBorder = () => {};
 
 const checkCollisionCells = () => {
-  /*
-  moveDirection = "left";
-  moveDirection = "right";
-  moveDirection = "top";
-  moveDirection = "down";
-  */
-  /*const tryMove = () => {
-    for (let indexY = 0; indexY < columns; indexY++) {
-      let firstNode;
-      for (let indexX = 0; indexX < rows; indexX++) {
-        let repeatIndex = indexX;
-        const move = () => {
-          firstNode = cells.filter(
-            (item) => item.y === indexY && item.x === repeatIndex
-          );
-          if (firstNode.length > 0 && firstNode[0].node.innerText !== "") {
-            let secondNode;
-            for (let remainingX = repeatIndex; remainingX >= 0; remainingX--) {
-              secondNode = cells.filter(
-                (item) => item.y === indexY && item.x === remainingX
-              );
-              if (
-                secondNode.length > 0 &&
-                secondNode[0].node.innerText === "" &&
-                secondNode[0].x < firstNode[0].x
-              ) {
-                const dataFirstNode = firstNode[0].node.innerText;
-                const dataSecondNode = secondNode[0].node.innerText;
-                firstNode[0].node.innerText = dataSecondNode;
-                secondNode[0].node.innerText = dataFirstNode;
-                repeatIndex--;
-                console.log(repeatIndex);
-                move();
-              }
-            }
-          }
-        };
-        move();
-      }
-    }
-  };*/
   const getRandomNum = (data) => {
     const num = Math.round(Math.random() * (data - 1));
     console.log(num);
@@ -208,26 +217,8 @@ const checkCollisionCells = () => {
   const calculate = (firstElement, secondElement) => {
     firstElement.textContent = "";
     secondElement.textContent = +secondElement.textContent * 2;
-    if (+secondElement.textContent * 2 === 4) {
-      secondElement.classList.remove("color1");
-      secondElement.classList.add("color2");
-    } else if (+secondElement.textContent * 2 === 8) {
-      secondElement.classList.remove("color2");
-      secondElement.classList.add("color3");
-    } else if (+secondElement.textContent * 2 === 16) {
-      secondElement.classList.remove("color3");
-      secondElement.classList.add("color4");
-    } else if (+secondElement.textContent * 2 === 32) {
-      secondElement.classList.remove("color4");
-      secondElement.classList.add("color5");
-    } else if (+secondElement.textContent * 2 === 64) {
-      secondElement.classList.remove("color5");
-      secondElement.classList.add("color6");
-    } else if (+secondElement.textContent * 2 === 128) {
-      secondElement.classList.remove("color6");
-      secondElement.classList.add("color7");
-    }
 
+    addColor(firstElement, secondElement, "calculate");
     playAnimation(secondElement.parentNode, "cellFirstAnimation");
     countEmptyCells++;
   };
@@ -237,25 +228,7 @@ const checkCollisionCells = () => {
 
     firstElement.textContent = numSecondCell;
     secondElement.textContent = numFirstCell;
-    if (+secondElement.textContent === 4) {
-      secondElement.classList.remove("color1");
-      secondElement.classList.add("color2");
-    } else if (+secondElement.textContent === 8) {
-      secondElement.classList.remove("color2");
-      secondElement.classList.add("color3");
-    } else if (+secondElement.textContent === 16) {
-      secondElement.classList.remove("color3");
-      secondElement.classList.add("color4");
-    } else if (+secondElement.textContent === 32) {
-      secondElement.classList.remove("color4");
-      secondElement.classList.add("color5");
-    } else if (+secondElement.textContent === 64) {
-      secondElement.classList.remove("color5");
-      secondElement.classList.add("color6");
-    } else if (+secondElement.textContent === 128) {
-      secondElement.classList.remove("color6");
-      secondElement.classList.add("color7");
-    }
+    addColor(firstElement, secondElement, "swap");
   };
 
   /*const playingFieldData = playingField.children;
@@ -269,21 +242,24 @@ const checkCollisionCells = () => {
     let spawnEmptyCell = false;
 
     const move = () => {
-      for (let i = arr.length - 1; i >= 0; i--) {
-        for (let j = 1; j < columns - (i % 4); j++) {
-          if (arr[i + 1] !== undefined) {
-            if (
-              arr[i].children[0].textContent !== "" &&
-              arr[i + 1].children[0].textContent === ""
-            ) {
-              swap(arr[i].children[0], arr[i + 1].children[0]);
-              if (!spawnEmptyCell) {
-                spawnEmptyCell = true;
+      const swapCells = () => {
+        for (let i = arr.length - 1; i >= 0; i--) {
+          for (let j = 1; j < columns - (i % 4); j++) {
+            if (arr[i + 1] !== undefined) {
+              if (
+                arr[i].children[0].textContent !== "" &&
+                arr[i + 1].children[0].textContent === ""
+              ) {
+                swap(arr[i].children[0], arr[i + 1].children[0]);
+                if (!spawnEmptyCell) {
+                  spawnEmptyCell = true;
+                }
               }
             }
           }
         }
-      }
+      };
+      swapCells();
       if (indexData) {
         indexData -= 1;
         console.log("recursion");
@@ -306,6 +282,7 @@ const checkCollisionCells = () => {
             }
           }
         }
+        swapCells();
         if (spawnEmptyCell) {
           tryFillRandomCell();
         }
@@ -322,21 +299,24 @@ const checkCollisionCells = () => {
     let spawnEmptyCell = false;
 
     const move = () => {
-      for (let i = arr.length - 1; i >= 0; i--) {
-        for (let j = 1; j < rows; j++) {
-          if (arr[i + 4] !== undefined) {
-            if (
-              arr[i].children[0].textContent !== "" &&
-              arr[i + 4].children[0].textContent === ""
-            ) {
-              swap(arr[i].children[0], arr[i + 4].children[0]);
-              if (!spawnEmptyCell) {
-                spawnEmptyCell = true;
+      const swapCells = () => {
+        for (let i = arr.length - 1; i >= 0; i--) {
+          for (let j = 1; j < rows; j++) {
+            if (arr[i + 4] !== undefined) {
+              if (
+                arr[i].children[0].textContent !== "" &&
+                arr[i + 4].children[0].textContent === ""
+              ) {
+                swap(arr[i].children[0], arr[i + 4].children[0]);
+                if (!spawnEmptyCell) {
+                  spawnEmptyCell = true;
+                }
               }
             }
           }
         }
-      }
+      };
+      swapCells();
       if (indexData) {
         indexData -= 1;
         console.log("recursion");
@@ -359,6 +339,7 @@ const checkCollisionCells = () => {
             }
           }
         }
+        swapCells();
         if (spawnEmptyCell) {
           tryFillRandomCell();
         }

@@ -139,37 +139,37 @@ main {
   }
 }
 
-/*.color1 {
-  background-color: rgb(238, 217, 30) !important;
+.color1 {
+  color: rgb(231, 179, 9) !important;
 }
 
 .color2 {
-  background-color: rgb(238, 165, 30) !important;
+  color: rgb(231, 161, 9) !important;
 }
 
 .color3 {
-  background-color: rgb(238, 113, 30) !important;
+  color: rgb(231, 98, 9) !important;
 }
 
 .color4 {
-  background-color: rgb(231, 30, 238) !important;
+  color: rgb(235, 46, 13) !important;
 }
 
 .color5 {
-  background-color: rgb(196, 30, 238) !important;
+  color: rgb(236, 14, 136) !important;
 }
 
 .color6 {
-  background-color: rgb(127, 30, 238) !important;
+  color: rgb(190, 14, 235) !important;
 }
 
 .color7 {
-  background-color: rgb(61, 30, 238) !important;
+  color: rgb(62, 31, 235) !important;
 }
 
 .color8 {
-  background-color: rgb(30, 238, 158) !important;
-}*/
+  color: rgb(30, 96, 238) !important;
+}
 
 .startText {
   display: flex;
