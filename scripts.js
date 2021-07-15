@@ -22,7 +22,7 @@ const countCell = 16;
 const rows = 4;
 const columns = 4;
 
-let scoreData = -1;
+let scoreData = 0;
 let cells = [];
 let countEmptyCells = 16;
 let cellPosition = { x: 0, y: 0 };
@@ -46,8 +46,8 @@ const removeAllNodes = () => {
   }
 };
 
-const setScore = () => {
-  scoreData++;
+const setScore = (num) => {
+  scoreData += +num;
   score.textContent = scoreData;
 };
 
@@ -217,7 +217,7 @@ const checkCollisionCells = () => {
   const calculate = (firstElement, secondElement) => {
     firstElement.textContent = "";
     secondElement.textContent = +secondElement.textContent * 2;
-
+    setScore(secondElement.textContent);
     addColor(firstElement, secondElement, "calculate");
     playAnimation(secondElement.parentNode, "cellFirstAnimation");
     countEmptyCells++;
