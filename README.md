@@ -2,4 +2,4 @@
 
 Wrote the 2048 game using Js.
 
-in progress..
+Demo: https://2048-game-taupe.vercel.app/
