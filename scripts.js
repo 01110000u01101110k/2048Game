@@ -263,7 +263,9 @@ const checkCollisionCells = () => {
       if (indexData) {
         indexData -= 1;
         console.log("recursion");
-        move();
+        setTimeout(() => {
+          move();
+        }, 20);
       } else {
         for (let i = arr.length - 1; i >= 0; i--) {
           for (let j = 1; j < columns - (i % 4); j++) {
@@ -320,7 +322,9 @@ const checkCollisionCells = () => {
       if (indexData) {
         indexData -= 1;
         console.log("recursion");
-        move();
+        setTimeout(() => {
+          move();
+        }, 20);
       } else {
         for (let i = arr.length - 1; i >= 0; i--) {
           for (let j = 1; j < rows; j++) {
